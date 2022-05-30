@@ -1,5 +1,9 @@
 const readline = require("readline-sync")
 
+const Chain = require("./src/chain")
+
+let chain = new Chain()
+
 function main() {
     clear()
 
@@ -13,10 +17,13 @@ function main() {
             case 1:
                 const amount = readline.questionInt('Amount: ')
                 const message = readline.question('Message: ')
+                chain.addBlock({ amount, message })
+                console.log("Block added!")
                 clear(true)
                 break;
             case 2:
                 console.log('Blocks List!')
+                chain.print() // lista a cadeia de blocos através da instância
                 clear(true)
                 break;
             case 0:
