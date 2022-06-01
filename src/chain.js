@@ -1,9 +1,21 @@
 const Block = require('./block')
+const utils = require('./utils')
+const Transaction = require('./tx')
+
+const txGenesis = new Transaction({
+    sender: "Bloco Genêsis", 
+    receiver: "------------",
+    amount: 0
+})
 
 class Chain {
 
     constructor() {
-        this.instance = [ new Block(0, 0, "Genesis Block") ]
+
+        const genesis = new Block({index: 0, previousHash: 0, data: txGenesis})
+        genesis.mine(0)
+
+        this.instance = [ genesis ]
         this.index = 1
     }
 
@@ -29,11 +41,12 @@ class Chain {
             const currentBlock = this.instance[i]
             const previousBlock = this.instance[i - 1]
 
-            const reGeneratedHash = currentBlock.generateHash(
+            const reGeneratedHash = utils.hashGenerator(
                 currentBlock.index, 
                 currentBlock.previousHash,
                 currentBlock.timestamp,
-                currentBlock.data
+                currentBlock.data,
+                currentBlock.nonce
             )
 
             if(currentBlock.hash !== reGeneratedHash) return false

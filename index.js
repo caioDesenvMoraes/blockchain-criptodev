@@ -1,19 +1,14 @@
 const readline = require("readline-sync")
-
 const Chain = require("./src/chain")
+const Transaction = require("./src/tx")
 
-let chain = new Chain()
-
-//Blocos Mockados
-chain.addBlock({ amount: 33 }) //Posicao 1
-chain.addBlock({ amount: 10 }) //Posicao index 2
-chain.addBlock({ amount: 44, message: 'BTC > All' }) //Posicao Index 3
-clear(true)
+const chain = new Chain()
 
 function main() {
     clear()
 
     let op
+    const txPool = []
 
     do {
         console.log('Welcome to my CryptoDevChain !\n\n')
@@ -21,10 +16,9 @@ function main() {
         clear()
         switch(op) {
             case 1:
-                const amount = readline.questionInt('Amount: ')
-                const message = readline.question('Message: ')
-                chain.addBlock({ amount, message })
+                chain.addBlock(txPool)
                 console.log("Block added!")
+                txPool.splice(0, txPool.length)
                 clear(true)
                 break;
             case 2:
@@ -37,6 +31,23 @@ function main() {
                 console.log(`Blockchain is ${audit ? "Integral" : "Violated"}`);
                 clear(true);
                 break
+            case 4:
+                const sender = readline.question("Sender: ")
+                const receiver = readline.question("Receiver: ")
+                const amount = readline.question("Amount: ")
+                const message = readline.question("Message: ")
+
+                const tx = new Transaction(sender, receiver, amount, message)
+                txPool.push(tx)
+                console.log('Transaction added to TX Pool')
+                
+                clear(true)
+                break;
+            case 5:
+                console.log(`Transction's Pool: ${txPool.length} Transactions `)
+                console.log(txPool)
+                clear(true)
+                break;
             case 0:
                 console.info("Bye!")
                 break;
