@@ -1,5 +1,5 @@
 const crypto = require("crypto-js")
-
+const utils = require("./utils")
 class Block {
 
     // Index (Height)
@@ -13,12 +13,29 @@ class Block {
         this.previousHash = previousHash
         this.data = data
         this.timestamp = new Date().getTime()
-        this.hash = this.generateHash(this.index, this.previousHash, this.timestamp, this.data)
+        this.nonce = 0
+        this.hash = ""
     }
 
-    generateHash(index, previousHash, timestamp, data) {
-        const hash = crypto.SHA256(index + previousHash + timestamp + JSON.stringify(data)).toString()
-        return hash
+    compute() {
+        return utils.hashGenerator(
+            this.index, 
+            this.previousHash,
+            this.timestamp,
+            this.data,
+            this.nonce
+        )
+    }
+
+    mine(difficult) {
+        const zeros = Array(difficult + 1).join("0")
+        while(this.hash.substring(0, difficult) !== zeros) {
+            this.nonce++
+            this.hash = this.compute()
+        }
+
+        console.log(`Block mined, nonce: ${this.nonce}, hash: ${this.hash}`);
+        return true
     }
 }
 
