@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "mocha ./test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,13 @@
     "url": "https://github.com/caioDesenvMoraes/blockchain-criptodev/issues"
   },
   "homepage": "https://github.com/caioDesenvMoraes/blockchain-criptodev#readme",
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.6"
+  },
   "dependencies": {
     "crypto-js": "^4.1.1",
     "readline-sync": "^1.4.10"
   }
+
 }

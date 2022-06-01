@@ -2,6 +2,8 @@ const Block = require('./block')
 const utils = require('./utils')
 const Transaction = require('./tx')
 
+const { DIFFICULTY, MINE_RATE } = require("../config")
+
 const txGenesis = new Transaction({
     sender: "Bloco Genêsis", 
     receiver: "------------",
@@ -11,9 +13,11 @@ const txGenesis = new Transaction({
 class Chain {
 
     constructor() {
+        this.difficulty = DIFFICULTY
 
-        const genesis = new Block({index: 0, previousHash: 0, data: txGenesis})
-        genesis.mine(0)
+        const genesis = new Block(0, 0, txGenesis)
+        genesis.mine(this.difficulty)
+
 
         this.instance = [ genesis ]
         this.index = 1
@@ -21,10 +25,16 @@ class Chain {
 
     addBlock(data) {
         const index = this.index
-        const previousHash = this.instance[this.index - 1].hash
+        const lastBlock = this.instance[index - 1]
+        const previousHash = lastBlock.hash
 
         const block = new Block(index, previousHash, data)
-        const mined = block.mine(6)
+
+        const timestamp = block.timestamp
+
+        this.difficulty = this.adjustDifficulty(lastBlock, timestamp)
+
+        const mined = block.mine(this.difficulty)
 
         if(mined) {
             this.index++
@@ -55,7 +65,11 @@ class Chain {
         }
 
         return true
+    }
 
+    adjustDifficulty(lastBlock, currentTimestamp) {
+        const difficulty = lastBlock.timestamp + MINE_RATE > currentTimestamp ? this.difficulty + 1 : this.difficulty - 1
+        return difficulty   
     }
 }
 

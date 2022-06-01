@@ -1,17 +1,12 @@
 const crypto = require("crypto-js")
+const { DIFFICULTY } = require("../config")
 const utils = require("./utils")
 class Block {
-
-    // Index (Height)
-    // Previous Hash
-    // Timestamp
-    // Data
-    // Hash
 
     constructor(index, previousHash, data) {
         this.index = index
         this.previousHash = previousHash
-        this.data = data
+        this.data = JSON.stringify(data)
         this.timestamp = new Date().getTime()
         this.nonce = 0
         this.hash = ""
@@ -27,16 +22,19 @@ class Block {
         )
     }
 
-    mine(difficult) {
-        const zeros = Array(difficult + 1).join("0")
-        while(this.hash.substring(0, difficult) !== zeros) {
+    mine(difficulty) {
+        const zeros = Array(difficulty + 1).join("0")
+        
+        while(this.hash.substring(0, difficulty) !== zeros) {
             this.nonce++
             this.hash = this.compute()
         }
 
-        console.log(`Block mined, nonce: ${this.nonce}, hash: ${this.hash}`);
+        console.log(`Block mined, nonce: ${this.nonce}, hash: ${this.hash}, difficulty: ${difficulty}`);
         return true
     }
+
+    
 }
 
 module.exports = Block
